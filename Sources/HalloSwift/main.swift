@@ -5,7 +5,6 @@ import Plot
 struct HalloSwift: Website {
     enum SectionID: String, WebsiteSectionID {
         case episodes
-        case about
     }
 
     struct ItemMetadata: WebsiteItemMetadata {
