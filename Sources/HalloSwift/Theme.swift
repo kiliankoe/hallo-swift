@@ -9,21 +9,28 @@ extension Theme where Site == HalloSwift {
     }
 
     private struct HalloSwiftHTMLFactory: HTMLFactory {
-        private var fontAwesomeCSS: Path = "https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"
+        private var css: [Path] = [
+            "/styles.css",
+            "https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css"
+        ]
 
         func makeIndexHTML(for index: Index, context: PublishingContext<HalloSwift>) throws -> HTML {
             HTML(
                 .lang(context.site.language),
-                .head(for: index, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
+                .head(for: index, on: context.site, stylesheetPaths: css),
                 .body(
                     .header(for: context),
                     .wrapper(
-                        .h1(.text(index.title)),
-                        .p(
-                            .class("description"),
-                            .text(context.site.description)
+                        .class("content"),
+                        .wrapper(
+                            .img(.class("cover"), .src("/cover.png")),
+                            .class("title"),
+                            .h1(.text(index.title)),
+                            .p(
+                                .class("description"),
+                                .text(context.site.description)
+                            )
                         ),
-                        .h2("Letzte Folgen"),
                         .itemList(
                             for: context.allItems(
                                 sortedBy: \.date,
@@ -40,7 +47,7 @@ extension Theme where Site == HalloSwift {
         func makeSectionHTML(for section: Section<HalloSwift>, context: PublishingContext<HalloSwift>) throws -> HTML {
             HTML(
                 .lang(context.site.language),
-                .head(for: section, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
+                .head(for: section, on: context.site, stylesheetPaths: css),
                 .body(
                     .header(for: context),
                     .wrapper(
@@ -54,22 +61,22 @@ extension Theme where Site == HalloSwift {
 
         func makeItemHTML(for item: Item<HalloSwift>, context: PublishingContext<HalloSwift>) throws -> HTML {
             HTML(
-                .head(for: item, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
+                .head(for: item, on: context.site, stylesheetPaths: css),
                 .body(
                     .class("item-page"),
                     .header(for: context),
                     .wrapper(
                         .article(
+                            .class("content"),
                             .div(
-                                .class("content"),
-                                .audioPlayer(for: Audio(url: item.metadata.mp3URL, format: .mp3), showControls: true),
+                                .audioPlayer(for: item.metadata.audio,
+                                             showControls: true),
                                 .contentBody(item.body)
                             ),
                             .span("Heute mit: "),
                             .ul(.class("host-list"), .forEach(item.metadata.speaker) { speaker in
                                 .li(.span(.class("speaker-social"), .socialDetail(for: speaker)))
                             }),
-                            .span("Tags: "),
                             .tagList(for: item, on: context.site)
                         )
                     ),
@@ -81,7 +88,7 @@ extension Theme where Site == HalloSwift {
         func makePageHTML(for page: Page, context: PublishingContext<HalloSwift>) throws -> HTML {
             HTML(
                 .lang(context.site.language),
-                .head(for: page, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
+                .head(for: page, on: context.site, stylesheetPaths: css),
                 .body(
                     .header(for: context),
                     .wrapper(.contentBody(page.body)),
@@ -93,7 +100,7 @@ extension Theme where Site == HalloSwift {
         func makeTagListHTML(for page: TagListPage, context: PublishingContext<HalloSwift>) throws -> HTML? {
             HTML(
                 .lang(context.site.language),
-                .head(for: page, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
+                .head(for: page, on: context.site, stylesheetPaths: css),
                 .body(
                     .header(for: context),
                     .wrapper(
@@ -119,7 +126,7 @@ extension Theme where Site == HalloSwift {
         func makeTagDetailsHTML(for page: TagDetailsPage, context: PublishingContext<HalloSwift>) throws -> HTML? {
             HTML(
                 .lang(context.site.language),
-                .head(for: page, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
+                .head(for: page, on: context.site, stylesheetPaths: css),
                 .body(
                     .header(for: context),
                     .wrapper(
@@ -174,11 +181,11 @@ private extension Node where Context == HTML.BodyContext {
         .ul(
             .class("item-list"),
             .forEach(items) { item in
-                .li(.article(
-                    .h1(.a(
-                        .href(item.path),
-                        .text("\(item.metadata.number) - \(item.title)")
-                    )),
+                return .li(.article(
+                    .h1(
+                        .a(.href(item.path), .text(item.title)),
+                        .span(.class("episode-number"), .text(item.metadata.episode))
+                    ),
                     .tagList(for: item, on: site),
                     .p(.text(item.description))
                 ))
@@ -188,10 +195,12 @@ private extension Node where Context == HTML.BodyContext {
 
     static func tagList<T: Website>(for item: Item<T>, on site: T) -> Node {
         .ul(.class("tag-list"), .forEach(item.tags) { tag in
-            .li(.a(
-                .href(site.path(for: tag)),
-                .text(tag.string)
-            ))
+            .li(.class("tag"),
+                .a(
+                    .href(site.path(for: tag)),
+                    .text(tag.string)
+                )
+            )
         })
     }
 
@@ -203,9 +212,10 @@ private extension Node where Context == HTML.BodyContext {
             ),
             .p(
                 .a(.img(.src("/HalloSwiftTheme/badge-apple.svg")), .href(site.iTunesURL)),
-                .a(.img(.src("/HalloSwiftTheme/badge-rss.svg")), .href(site.rssFeed))
+                .a(.img(.src("/HalloSwiftTheme/badge-rss.svg")), .href("/feed.xml"))
             ),
             .p(
+                .class("small"),
                 .text("© Copyright 2017-\(currentYear) Hallo Swift")
             )
         )
