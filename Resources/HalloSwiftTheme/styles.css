@@ -9,6 +9,10 @@ body {
     font-size: 20px;
 }
 
+.title h1 {
+    margin: 5px;
+}
+
 img.cover {
     display: inline-block;
     width: 80px;
