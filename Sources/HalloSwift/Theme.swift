@@ -23,7 +23,7 @@ extension Theme where Site == HalloSwift {
                             .class("description"),
                             .text(context.site.description)
                         ),
-                        .h2("Latest content"),
+                        .h2("Letzte Folgen"),
                         .itemList(
                             for: context.allItems(
                                 sortedBy: \.date,
@@ -65,11 +65,11 @@ extension Theme where Site == HalloSwift {
                                 .audioPlayer(for: Audio(url: item.metadata.mp3URL, format: .mp3), showControls: true),
                                 .contentBody(item.body)
                             ),
-                            .span("Hosts: "),
+                            .span("Heute mit: "),
                             .ul(.class("host-list"), .forEach(item.metadata.speaker) { speaker in
                                 .li(.span(.class("speaker-social"), .socialDetail(for: speaker)))
                             }),
-                            .span("Tagged with: "),
+                            .span("Tags: "),
                             .tagList(for: item, on: context.site)
                         )
                     ),
@@ -129,7 +129,7 @@ extension Theme where Site == HalloSwift {
                         ),
                         .a(
                             .class("browse-all"),
-                            .text("Alle tags"),
+                            .text("Alle Tags"),
                             .href(context.site.tagListPath)
                         ),
                         .itemList(
