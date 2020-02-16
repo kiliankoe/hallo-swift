@@ -16,7 +16,7 @@ extension Theme where Site == HalloSwift {
                 .lang(context.site.language),
                 .head(for: index, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
                 .body(
-                    .header(for: context, selectedSection: nil),
+                    .header(for: context),
                     .wrapper(
                         .h1(.text(index.title)),
                         .p(
@@ -42,7 +42,7 @@ extension Theme where Site == HalloSwift {
                 .lang(context.site.language),
                 .head(for: section, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
                 .body(
-                    .header(for: context, selectedSection: section.id),
+                    .header(for: context),
                     .wrapper(
                         .h1(.text(section.title)),
                         .itemList(for: section.items, on: context.site)
@@ -57,7 +57,7 @@ extension Theme where Site == HalloSwift {
                 .head(for: item, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
                 .body(
                     .class("item-page"),
-                    .header(for: context, selectedSection: item.sectionID),
+                    .header(for: context),
                     .wrapper(
                         .article(
                             .div(
@@ -83,7 +83,7 @@ extension Theme where Site == HalloSwift {
                 .lang(context.site.language),
                 .head(for: page, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
                 .body(
-                    .header(for: context, selectedSection: nil),
+                    .header(for: context),
                     .wrapper(.contentBody(page.body)),
                     .footer(for: context.site)
                 )
@@ -95,7 +95,7 @@ extension Theme where Site == HalloSwift {
                 .lang(context.site.language),
                 .head(for: page, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
                 .body(
-                    .header(for: context, selectedSection: nil),
+                    .header(for: context),
                     .wrapper(
                         .h1("Alle Tags"),
                         .ul(
@@ -121,7 +121,7 @@ extension Theme where Site == HalloSwift {
                 .lang(context.site.language),
                 .head(for: page, on: context.site, stylesheetPaths: [fontAwesomeCSS]),
                 .body(
-                    .header(for: context, selectedSection: nil),
+                    .header(for: context),
                     .wrapper(
                         .h1(
                             "Getagged mit ",
@@ -154,25 +154,17 @@ private extension Node where Context == HTML.BodyContext {
         .div(.class("wrapper"), .group(nodes))
     }
 
-    static func header<T: Website>(
-        for context: PublishingContext<T>,
-        selectedSection: T.SectionID?
-    ) -> Node {
-        let sectionIDs = T.SectionID.allCases
-
+    static func header<T: Website>(for context: PublishingContext<T>) -> Node {
+        let pages = context.pages.values.sorted { lhs, rhs in
+            lhs.path < rhs.path
+        }
         return .header(
-            .wrapper(
-                .a(.class("site-name"), .href("/"), .text(context.site.name)),
-                .if(sectionIDs.count > 1,
-                    .nav(
-                        .ul(.forEach(sectionIDs) { section in
-                            .li(.a(
-                                .class(section == selectedSection ? "selected" : ""),
-                                .href(context.sections[section].path),
-                                .text(context.sections[section].title)
-                            ))
-                        })
-                    )
+            .nav(
+                .ul(
+                    .li(.class("site-name"), .a(.href("/"), .text(context.site.name))),
+                    .forEach(pages) { page in
+                        .li(.a(.href(page.path), .text(page.title)))
+                    }
                 )
             )
         )
