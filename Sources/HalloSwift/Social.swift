@@ -9,10 +9,10 @@ extension Node where Context == HTML.BodyContext {
         if speakerElements.count == 1 {
             var twitterHandle = ""
             switch speaker.lowercased() {
-                case "ben": twitterHandle = "benchr"
+                case "ben": twitterHandle = "BenchR"
                 case "dom": twitterHandle = "swiftpainless"
                 case "vincent": twitterHandle = "regexident"
-                case "bilal": twitterHandle = "reffas_bilal"
+                case "bilal": twitterHandle = "Reffas_Bilal"
                 case "kilian": twitterHandle = "kiliankoe"
                 default: break
             }
