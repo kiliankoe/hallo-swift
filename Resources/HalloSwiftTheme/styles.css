@@ -1,0 +1,24 @@
+body {
+    font: "Helvetica Neue", "Helvetica", "Arial", sans-serif;
+}
+
+h1 {
+    font-size: 30px;
+    color: #222;
+    font-weight: bold;
+}
+
+.item-list {
+/*    max-width: 600px;*/
+/*    margin: 0 auto;*/
+}
+
+a.symbol {
+    color: #cdd4da;
+    font-size: 2rem;
+}
+
+.fa {
+    display: inline-block;
+    font: normal normal normal 14px/1 FontAwesome;
+}

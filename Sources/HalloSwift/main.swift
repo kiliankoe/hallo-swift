@@ -5,26 +5,32 @@ import Plot
 struct HalloSwift: Website {
     enum SectionID: String, WebsiteSectionID {
         case episodes
+        case about
     }
 
     struct ItemMetadata: WebsiteItemMetadata {
-        let title: String
-        let publishDate: Date
-        let author: String
-
-        let description: String
-        let summary: String
-
-        let url: URL
-        let media: [URL]
+        var number: String
+        var speaker: [String]
+        var mp3URL: URL // this could probably be a computed var based on `number`
     }
 
-    // Update these properties to configure your website:
     var url = URL(string: "https://hallo-swift.de")!
     var name = "Hallo Swift"
     var description = "Podcast über Swift, iOS, macOS und verwandte Themen"
     var language: Language { .german }
     var imagePath: Path? { nil }
+
+    var iTunesURL = URL(string: "https://podcasts.apple.com/podcast/id1225721421")!
+    var rssFeed = URL(string: "http://feeds.soundcloud.com/users/soundcloud:users:300507271/sounds.rss")! // FIXME
+
+    var githubURL = URL(string: "https://github.com/hallo-swift")!
+    var twitterURL = URL(string: "https://twitter.com/hallo_swift")!
 }
 
-try HalloSwift().publish(withTheme: .foundation)
+try HalloSwift().publish(using: [
+    .addMarkdownFiles(),
+    .copyResources(),
+    .generateHTML(withTheme: .halloSwift),
+    .generateRSSFeed(including: [.episodes]),
+    .generateSiteMap()
+])
