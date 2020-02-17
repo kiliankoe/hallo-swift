@@ -78,7 +78,8 @@ ul {
 .tag {
     font-family: Helvetica, Arial, sans-serif;
     font-size: 10pt;
-    background: #ffe2ce;
+/*    background: #ffe2ce;*/
+    background: linear-gradient(#ffdab2, #feb599);
     display: inline-block;
     padding: 5px;
     margin: 0 5px 5px 0;
@@ -86,7 +87,7 @@ ul {
 }
 
 .tag:hover {
-    background-color: #fff2e9;
+    background-color: linear-gradient(#feb599, #ffdab2);
 }
 
 footer {
